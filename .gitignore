@@ -6,3 +6,6 @@ Env/
 
 # Ignore pip local packages info
 *.egg-info
+
+# Ignore secrets (can reveal sensitive information
+Secrets.py
