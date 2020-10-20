@@ -85,17 +85,17 @@ class Chron:
         now = datetime.datetime.now()
 
         # Compare hour
-        chron_values["hour"] = True if now.hour() == self.hour or self.hour is None else False
+        chron_values["hour"] = True if now.hour == self.hour or self.hour is None else False
         # Compare minute
-        chron_values["minute"] = True if now.minute() == self.minute or self.minute is None else False
+        chron_values["minute"] = True if now.minute == self.minute or self.minute is None else False
         # Compare day
-        chron_values["day"] = True if now.day() == self.day or self.day is None else False
+        chron_values["day"] = True if now.day == self.day or self.day is None else False
         # Compare month
-        chron_values["month"] = True if now.month() == self.month or self.month is None else False
+        chron_values["month"] = True if now.month == self.month or self.month is None else False
         # Compare dow
-        chron_values["dow"] = True if now.weekday() == self.dow or self.dow is None else False
+        chron_values["dow"] = True if now.weekday == self.dow or self.dow is None else False
         # Compare year
-        chron_values["year"] = True if now.year() == self.year or self.year is None else False
+        chron_values["year"] = True if now.year == self.year or self.year is None else False
 
         # If all values are set to True, then current time is valid
         if all(chron_values.values()):
