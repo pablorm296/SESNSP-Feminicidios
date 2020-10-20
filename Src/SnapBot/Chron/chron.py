@@ -28,18 +28,24 @@ class Chron:
         """
 
         # Validate values
-        if hour < 0 or hour > 23:
-            raise ValueError("Invalid hour value!")
-        if minute < 0 or minute > 59:
-            raise ValueError("Invalid minute value!")
-        if day < 1 or day > 31:
-            raise ValueError("Invalid day value!")
-        if month < 1 or month > 12:
-            raise ValueError("Invalid month value!")
-        if dow < 1 or dow > 7:
-            raise ValueError("Invalid day of week value!")
-        if year < datetime.datetime.now().year:
-            raise ValueError("Can't use a past year!")
+        if hour is not None:
+            if hour < 0 or hour > 23:
+                raise ValueError("Invalid hour value!")
+        if minute is not None:
+            if minute < 0 or minute > 59:
+                raise ValueError("Invalid minute value!")
+        if day is not None:
+            if day < 1 or day > 31:
+                raise ValueError("Invalid day value!")
+        if month is not None:
+            if month < 1 or month > 12:
+                raise ValueError("Invalid month value!")
+        if dow is not None:
+            if dow < 1 or dow > 7:
+                raise ValueError("Invalid day of week value!")
+        if year is not None:
+            if year < datetime.datetime.now().year:
+                raise ValueError("Can't use a past year!")
 
         # List of valid attributes
         self.chron_attributes = [
