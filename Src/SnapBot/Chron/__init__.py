@@ -1,1 +1,1 @@
-from .chron import Chron
+from .Chron import Chron

@@ -70,12 +70,19 @@ class Chron:
             "year": self.year
         }
 
-    def compare(self, target = datetime.datetime.now(), simple = True):
+    def compare(self, target = datetime.datetime.now()):
+        """Compares the stored schedule expression with the current datetime
+        
+        Args:
+            target (datetime, optional): Datetime object that will be compared to the stored schedule expression. Defaults to datetime.datetime.now().
+
+        Returns:
+            bool: Does the target datetime matches the schedule expressin?
+        """
 
         # If all values are set to None, then everytime is valid!
         if all([chron_val is None for chron_val in self.chron_dict.values()]):
-            if not simple:
-                logger.info("All values were set to None in chron object. Taking any datetime value as valid!")
+            logger.warning("All values were set to None in the current Chron object. Taking any datetime value as valid!")
             return True
 
         # Init a dict to compare values
