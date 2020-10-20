@@ -1,2 +1,8 @@
 # Ignore python virtual env
 Env/
+
+# Ignore python cached files
+*.pyc
+
+# Ignore pip local packages info
+*.egg-info
