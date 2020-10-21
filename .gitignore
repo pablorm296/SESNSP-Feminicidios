@@ -10,5 +10,8 @@ Env/
 # Ignore secrets (can reveal sensitive information
 Secrets.py
 
+# Ignore .env files
+.env
+
 # Ignore vs code files
 .vscode/
