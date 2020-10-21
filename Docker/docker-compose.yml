@@ -8,7 +8,7 @@ services:
         restart: "no"
         volumes:
             - type: bind
-              source: ${ROOT_FOLDER}/Data
+              source: ${ROOT_FOLDER}/PublicData
               target: /var/www/SESNSP/
             - type: bind
               source: ${ROOT_FOLDER}/
