@@ -43,9 +43,18 @@ class SnapBot:
         # Build chron object
         logging.info("Initializing chron expression...")
         self.Chron = Chron(hour = hour, minute = minute, day = day, month = month, dow = dow, year = year)
-        
+                
         # Register target url
+        logging.info("Registering target URL...")
         self.targetURL = targetURL
+
+        # Register server IP
+        logging.info("Registering server IP...")
+        self.serverURL = SERVER_IP
+
+        # Register server IP
+        logging.info("Registering server public path...")
+        self.serverPublicPath = SERVER_PUBLIC_PATH
 
     def sendTelegramAlert(self, msg:str):
 
@@ -73,7 +82,7 @@ class SnapBot:
 
         # Create new directory in save path
         # Define directory name
-        dirName = "FullPage_{0}".format(datetime.datetime.now().strftime("%Y-%m-%d-%H%M%S%f"))
+        dirName = "FullPage_{0}".format(datetime.datetime.now().strftime("%Y-%m-%d-%H%M-%S-%f"))
         # Define full dir name
         fullDirName = "{0}/{1}".format(savePath, dirName)
 
@@ -88,9 +97,9 @@ class SnapBot:
         if test_response.status_code >= 300:
             error_msg = "The target URL responded with an unsuccessful status code (<code>{0}</code>). Please make a manual check of the page.".format(test_response.status_code)
             # Log error
-            logger.warning(error_msg)
+            logger.error(error_msg)
             # Send telegram message
-            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg), )
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             # Raise
             raise OSError(error_msg)
         else:
@@ -117,8 +126,58 @@ class SnapBot:
             # Log error
             logger.warning(error_msg)
 
-        # Send last line of stdoutput
-        print(subprocess_return.stdout)
+        logger.info("wget finished with a '{0}' exit status".format(subprocess_return.returncode))
+
+        # Get lines of stderr (IDK why wget sends everything to stderr)
+        subprocess_lines = subprocess_return.stderr.decode("utf-8").splitlines()
+        subprocess_last_line = subprocess_lines[-1]
+        
+        # Send last line of std
+        self.sendTelegramAlert("🥳 I successfully made a snapshot of the target entry at the SESNSP website. <code>wget</code> says: <pre>{0}</pre>".format(subprocess_last_line))
+
+        # Zip it
+        logger.info("Compressing downloaded file...")
+        subprocess_return = subprocess.run('zip -r {0}.zip {0}'.format(fullDirName), capture_output = True, shell = True)
+
+        # Check result
+        if subprocess_return.returncode != 0:
+            # Define error message
+            error_msg = "I failed to zip the downloaded snap shot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise OSError(error_msg)
+
+        # Get md5sum
+        logger.info("Getting md5 hash sum...")
+        subprocess_return = subprocess.run('md5sum {0}.zip'.format(fullDirName), capture_output = True, shell = True)
+
+        # Check result
+        if subprocess_return.returncode != 0:
+            # Define error message
+            error_msg = "I failed to get the MD5 sum of the downloaded snap shot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise OSError(error_msg)
+
+        md5sum = subprocess_return.stdout.decode('utf-8').split(" ")[0]
+
+        # Send md5sum via Telegram
+        self.sendTelegramAlert("MD5 hash sum of the compressed snap shot: <code>{0}</code>".format(md5sum))
+
+        # Make a copy of the file into the public server path
+        logger.info("Making a copy into the public directory of the server...")
+        subprocess_return = subprocess.run('cp {0}.zip {1}FullPage/'.format(fullDirName, self.serverPublicPath), capture_output = True, shell = True)
+
+        # Check result
+        if subprocess_return.returncode != 0:
+            # Define error message
+            error_msg = "I failed to make a public copy of the snap shot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise OSError(error_msg)
 
     def getDocument(self, savePath:str = None, force:bool = False):
         # If savePath is not defined, use class path
