@@ -24,7 +24,7 @@ class SnapBot:
 
         # Send test message
         logging.info("Sending test message...")
-        self.sendTelegramAlert("Hi! Im a the SESNSP Snap Bot 🤖. I just wake up, and briefly I will make a snap shot of the target entry at the SESNSP web site!")
+        self.sendTelegramAlert("Hi! I'm the SESNSP Snap Bot 🤖. I just wake up and briefly I will make a snap shot of the target entry at the SESNSP web site!")
         
         # Validate save path
         logging.info("Validating path...")
@@ -32,11 +32,11 @@ class SnapBot:
             self.savePath = savePath
         else:
             # Define error message
-            error_msg = "The specified path ('{0}') to save the snap shot does not exist (or I can't access it 😖)! Please, contact my administrator.".format(savePath)
+            error_msg = "The specified path (<code>{0}</code>) to save the snap shot does not exist (or I can't access it 😖)! Please contact my administrator.".format(savePath)
             # Log error
             logger.error(error_msg)
             # Send error message to telegram chat
-            self.sendTelegramAlert("⚠ Something went wrong! {0}".format(error_msg))
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             # Raise error
             raise OSError(error_msg)
 
@@ -48,8 +48,9 @@ class SnapBot:
         self.targetURL = targetURL
 
     def sendTelegramAlert(self, msg:str):
+
         # Send message
-        self.TelegramBot.send_message(self.TelegramChatId, msg)
+        self.TelegramBot.send_message(self.TelegramChatId, msg, parse_mode = "HTML")
 
     def compareChronExpression(self):
         # Compare chron expression with current datetime
@@ -63,11 +64,11 @@ class SnapBot:
         # Compare chron date
         if not force and not self.compareChronExpression():
             # Define error message
-            error_msg = "Attempted to run bot routine outside a valid timedate!"
+            error_msg = "I was woken up outside a valid schedule expression 😞!"
             # Log error
             logger.error(error_msg)
             # Send error message to telegram chat
-            self.sendTelegramAlert("⚠ Something went wrong! {0}".format(error_msg))
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             raise Exception(error_msg)
 
         # Create new directory in save path
@@ -81,11 +82,19 @@ class SnapBot:
         os.mkdir(fullDirName)
 
         # Check if page is online
-        logger.info("Testing target URL ({0})".format(self.targetURL))
+        logger.info("Testing target URL ({0})...".format(self.targetURL))
         test_response = requests.get(self.targetURL)
 
         if test_response.status_code >= 300:
-            logger.warning("The target URL responded with a {0} status code! Please make a manual check of the page.".format(test_response.status_code))
+            error_msg = "The target URL responded with an unsuccessful status code (<code>{0}</code>). Please make a manual check of the page.".format(test_response.status_code)
+            # Log error
+            logger.warning(error_msg)
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg), )
+            # Raise
+            raise OSError(error_msg)
+        else:
+            logger.info("The target URL appears to be ok!")
 
         # Use wget to make copy of page
         logger.info("Running wget from suprocess...")
@@ -93,8 +102,23 @@ class SnapBot:
         # -k convert links (Change all links to relative local links)
         # -K backup (When converting a file, back up the original version with a .orig suffix)
         # -p page requisites (Download all the original files needed to display the downloaded page)
+        # -e robots=off
+        # -nv Simple output
+        # -P dir suffix (output to specified directory)
         # -H span hosts
-        subprocess_return = subprocess.call(['wget', '-E', '-H','-k', '-K', '-p', self.targetURL])
+        subprocess_return = subprocess.run('wget -E -H -k -K -e robots=off -nv -p -P {0} {1}'.format(fullDirName, self.targetURL), capture_output = True, shell = True)
+
+        # Check return status from subprocess
+        if subprocess_return.returncode != 0:
+            # Define error message
+            error_msg = "<code>wget</code> returned a non zero status code (<code>{0}</code>)! Sometimes this happens when there are minor network failures. The captured output from stderr was: <pre>{1}</pre> Please contact my administrator.".format(subprocess_return.returncode, subprocess_return.stderr.decode('utf-8'))
+            # Send telegram alert
+            self.sendTelegramAlert("⚠ Something didn't add up! {0}".format(error_msg))
+            # Log error
+            logger.warning(error_msg)
+
+        # Send last line of stdoutput
+        print(subprocess_return.stdout)
 
     def getDocument(self, savePath:str = None, force:bool = False):
         # If savePath is not defined, use class path
