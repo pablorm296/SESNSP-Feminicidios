@@ -1,0 +1,17 @@
+# Please make sure to define the following variables via Export or Compose CLI:
+# DOCKER_ROOT_FOLDER
+# DATAINT_ROOT_FOLDER
+version: "3.8"
+services:
+    Apache:
+        image: SnapBot/apache:latest
+        restart: "no"
+        volumes:
+            - type: bind
+              source: ${ROOT_FOLDER}/Data
+              target: /var/www/SESNSP/
+            - type: bind
+              source: ${ROOT_FOLDER}/
+              target: /srv/SESNSP/
+        ports: 
+            - "80:80"
