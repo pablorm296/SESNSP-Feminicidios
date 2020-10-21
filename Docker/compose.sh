@@ -1,1 +1,1 @@
-sudo docker-compose -p SnapBot up
+sudo docker-compose -p SnapBot up -d
