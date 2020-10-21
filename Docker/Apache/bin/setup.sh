@@ -1,7 +1,7 @@
 # Install apache and php
 apt-get update -q && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -yq software-properties-common apache2 wget coreutils zip unzip python3.8 python3-pip
+    apt-get install -yq software-properties-common apache2 wget coreutils zip unzip python3.8 python3-pip git
 
 # Install virtualenv
 pip3 install virtualenv
