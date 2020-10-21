@@ -14,16 +14,6 @@ logger = logging.getLogger(__name__)
 class SnapBot:
 
     def __init__(self, targetURL:str, savePath:str, hour:int = None, minute:int = None, day:int = None, month:int = None, dow:str = None, year:int = None):
-        # Validate save path
-        if os.path.isdir(savePath):
-            self.savePath = savePath
-        else:
-            raise ValueError("The specified save directory does not exist!")
-
-        # Build chron object
-        logging.info("Initializing chron expression...")
-        self.Chron = Chron(hour = hour, minute = minute, day = day, month = month, dow = dow, year = year)
-
         # Init Telegram Bot
         logging.info("Initializing telegram bot...")
         self.TelegramBot = telegram.Bot(token = TELEGRAM_BOT_TOKEN)
@@ -32,15 +22,34 @@ class SnapBot:
         logging.info("Registering chat ID...")
         self.TelegramChatId = TELEGRAM_BOT_CHAT_ID
         
+        # Validate save path
+        logging.info("Validating path...")
+        if os.path.isdir(savePath):
+            self.savePath = savePath
+        else:
+            # Define error message
+            error_msg = "The specified path ({0}) to save the snap shot does not exist (or I can't access it 😖)! Please, contact my administrator.".format(savePath)
+            # Log error
+            logger.error(error_msg)
+            # Send error message to telegram chat
+            self.sendTelegramAlert("⚠ Something went wrong! {0}".format(error_msg))
+            # Raise error
+            raise OSError(error_msg)
+
+        # Build chron object
+        logging.info("Initializing chron expression...")
+        self.Chron = Chron(hour = hour, minute = minute, day = day, month = month, dow = dow, year = year)
+        
         # Register target url
         self.targetURL = targetURL
 
         # Send test message
         logging.info("Sending test message...")
-        self.TelegramBot.send_message(self.TelegramChatId, "Hi! Im a the SESNSP Snap Bot. I just wake up, and briefly I will make a snap shot of the target entry at the SESNSP web site!")
+        self.sendTelegramAlert("Hi! Im a the SESNSP Snap Bot 🤖. I just wake up, and briefly I will make a snap shot of the target entry at the SESNSP web site!")
 
     def sendTelegramAlert(self, msg:str):
-        pass
+        # Send message
+        self.TelegramBot.send_message(self.TelegramChatId, msg)
 
     def compareChronExpression(self):
         # Compare chron expression with current datetime
@@ -53,8 +62,12 @@ class SnapBot:
 
         # Compare chron date
         if not force and not self.compareChronExpression():
+            # Define error message
             error_msg = "Attempted to run bot routine outside a valid timedate!"
+            # Log error
             logger.error(error_msg)
+            # Send error message to telegram chat
+            self.sendTelegramAlert("⚠ Something went wrong! {0}".format(error_msg))
             raise Exception(error_msg)
 
         # Create new directory in save path
