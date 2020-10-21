@@ -4,4 +4,4 @@
 # cp /etc/apache2/apache2.conf ./config/apache2.conf
 
 # Build docker
-sudo docker build -t SnapBot/apache:latest . -f Dockerfile
+sudo docker build -t snapbot/apache:latest . -f Dockerfile
