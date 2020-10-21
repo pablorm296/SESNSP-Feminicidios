@@ -32,7 +32,7 @@ class SnapBot:
             self.savePath = savePath
         else:
             # Define error message
-            error_msg = "The specified path ({0}) to save the snap shot does not exist (or I can't access it 😖)! Please, contact my administrator.".format(savePath)
+            error_msg = "The specified path ('{0}') to save the snap shot does not exist (or I can't access it 😖)! Please, contact my administrator.".format(savePath)
             # Log error
             logger.error(error_msg)
             # Send error message to telegram chat
