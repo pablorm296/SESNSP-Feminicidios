@@ -21,6 +21,10 @@ class SnapBot:
         # Register target group chat
         logging.info("Registering chat ID...")
         self.TelegramChatId = TELEGRAM_BOT_CHAT_ID
+
+        # Send test message
+        logging.info("Sending test message...")
+        self.sendTelegramAlert("Hi! Im a the SESNSP Snap Bot 🤖. I just wake up, and briefly I will make a snap shot of the target entry at the SESNSP web site!")
         
         # Validate save path
         logging.info("Validating path...")
@@ -42,10 +46,6 @@ class SnapBot:
         
         # Register target url
         self.targetURL = targetURL
-
-        # Send test message
-        logging.info("Sending test message...")
-        self.sendTelegramAlert("Hi! Im a the SESNSP Snap Bot 🤖. I just wake up, and briefly I will make a snap shot of the target entry at the SESNSP web site!")
 
     def sendTelegramAlert(self, msg:str):
         # Send message
