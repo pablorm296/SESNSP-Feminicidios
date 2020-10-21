@@ -32,7 +32,6 @@ requests==2.22.0
 retrying==1.3.3
 rope==0.18.0
 six==1.14.0
--e git+git@github.com:pablorm296/SESNSP-Feminicidios.git@dc1e13b072eb1a2b5ff507865f33dd398507b422#egg=SnapBot&subdirectory=Src
 toml==0.10.1
 tornado==6.0.4
 tzlocal==2.1
