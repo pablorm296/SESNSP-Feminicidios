@@ -11,7 +11,7 @@ a2enmod headers
 a2enmod rewrite
 
 # Create a copy of the repo
-git clone https://github.com/pablorm296/SESNSP-Feminicidios.git
+git clone https://github.com/pablorm296/SESNSP-Feminicidios.git /srv/SESNSP
 
 # Set time zone
 echo "America/Mexico_City" > /etc/timezone
