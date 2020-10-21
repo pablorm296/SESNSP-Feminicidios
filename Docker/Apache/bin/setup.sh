@@ -1,7 +1,7 @@
 # Install apache and php
 apt-get update -q && \
     DEBIAN_FRONTEND=noninteractive \
-    apt-get install -yq software-properties-common apache2 wget md5sum zip unzip python3.8 python3-pip
+    apt-get install -yq software-properties-common apache2 wget coreutils zip unzip python3.8 python3-pip
 
 # Enable mods
 a2enmod headers
