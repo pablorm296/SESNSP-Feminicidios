@@ -3,6 +3,9 @@ apt-get update -q && \
     DEBIAN_FRONTEND=noninteractive \
     apt-get install -yq software-properties-common apache2 wget coreutils zip unzip python3.8 python3-pip
 
+# Install virtualenv
+pip3 install virtualenv
+
 # Enable mods
 a2enmod headers
 a2enmod rewrite
