@@ -340,5 +340,5 @@ class SnapBot:
         document_link = "http://{0}/Docs/{1}".format(self.serverURL, docName)
 
         # Send link
-        self.sendTelegramAlert('😌 You can download the downloaded document <a href="{0}">here</a>'.format(document_link))
+        self.sendTelegramAlert('😌 You can download the document <a href="{0}">here</a>'.format(document_link))
         
