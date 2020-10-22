@@ -12,6 +12,8 @@ COPY bin .
 # Copy config dir
 COPY config .
 
+COPY Secrets.py .
+
 # Run setup script
 RUN ./setup.sh
 
