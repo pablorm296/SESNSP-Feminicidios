@@ -233,7 +233,6 @@ class SnapBot:
         # Search by xpath
         logger.info("Looking for link via xpath...")
         xpath_result = dom.xpath('/html/body/main/div/div[1]/div[4]/div/p[2]/a/@href')
-        xpath_result = []
 
         # Predefine a regex_result
         regex_result = None
@@ -244,7 +243,7 @@ class SnapBot:
             # Log warning
             logger.warning("Didn't get a valid href via xpath. Trying regex...")
             # Send alert
-            self.sendTelegramAlert("😧 I couldn't find a valid link to the target document by XPATH. I will try suing some regex magic...")
+            self.sendTelegramAlert("😧 I couldn't find a valid link to the target document using the expected Xpath. I will try suing some regex magic...")
 
             # Search using regex
             regex_result = dom.xpath('.//a[contains(text(),"Consulta la información")]/@href')
@@ -274,7 +273,7 @@ class SnapBot:
         document_id = get_document_id(href)
 
         # Check document id
-        if len(document_id < 1) or len(document_id) > 1:
+        if len(document_id) < 1 or len(document_id) > 1:
             # Define error msg
             error_msg = "I failed to get the document ID. Maybe it's no longer shared via Google Drive? Please contact my administrator."
             # Log error
