@@ -26,8 +26,6 @@ RUN ["cp", "./sesnsp.conf", "/etc/apache2/sites-available/"]
 
 # Create server directories
 RUN ["mkdir", "-p", "/var/www/SESNSP"]
-RUN ["mkdir", "-p", "/var/www/SESNSP/FullPage"]
-RUN ["mkdir", "-p", "/var/www/SESNSP/Docs"]
 
 # Run second setup script
 RUN ./setup_2.sh
