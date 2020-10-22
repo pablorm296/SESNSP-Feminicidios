@@ -1,1 +1,6 @@
-02 1 22 * * /bin/bash /srv/SESNSP/wake_up.bash
+00 12 01 * * /bin/bash /srv/SESNSP/wake_up.bash
+00 12 20 * * /bin/bash /srv/SESNSP/wake_up.bash
+00 08 27 * * /bin/bash /srv/SESNSP/wake_up.bash
+00 12 27 * * /bin/bash /srv/SESNSP/wake_up.bash
+00 20 27 * * /bin/bash /srv/SESNSP/wake_up.bash
+00 12 28 * * /bin/bash /srv/SESNSP/wake_up.bash
