@@ -12,9 +12,7 @@ def get_document_id(url:str):
     # Check result
     if len(match_results) < 1:
         return []
-    elif len(match_results) == 1:
-        return match_results[0]
-    else:
+    elif len(match_results) > 1:
         return match_results
 
 def download_document(id, destination):
