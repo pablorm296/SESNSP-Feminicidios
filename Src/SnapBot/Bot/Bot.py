@@ -183,7 +183,7 @@ class SnapBot:
         fullPage_dir_link = "http://{0}/FullPage/{1}.zip".format(self.serverURL, dirName)
 
         # Send link
-        self.sendTelegramAlert('😊 You can download the compressed snapshot <a href="{0}">here</a>'.format(fullPage_dir_link))
+        self.sendTelegramAlert('😌 You can download the compressed snapshot <a href="{0}">here</a>'.format(fullPage_dir_link))
 
     def getDocument(self, savePath:str = None, force:bool = False):
         # If savePath is not defined, use class path
