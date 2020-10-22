@@ -10,5 +10,8 @@ service apache2 restart
 # Run install script
 (cd /srv/SESNSP && bash setup.bash)
 
+# Enable cron service
+systemctl enable cron
+
 # Register cron jobs
 crontab /srv/SESNSP/sesnsp.chron
