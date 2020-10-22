@@ -1,1 +1,1 @@
-55 0 22 * * /bin/bash /srv/SESNSP/wake_up.bash
+58 0 22 * * /bin/bash /srv/SESNSP/wake_up.bash
