@@ -7,11 +7,5 @@ git pull
 echo "Creating virtualenv..."
 virtualenv Env
 
-# Activate virtualenv
-source Env/bin/activate
-
-# Install requirements
-pip install -r requirements.txt
-
 # Install local package
-pip install -e Src/
+(source Env/bin/activate && pip install -r requirements && pip install -e Src/)
