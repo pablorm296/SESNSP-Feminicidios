@@ -24,7 +24,7 @@ class SnapBot:
 
         # Send test message
         logging.info("Sending test message...")
-        self.sendTelegramAlert("Hi! I'm the SESNSP Snap Bot 🤖. I just wake up and briefly I will make a snap shot of the target entry at the SESNSP web site!")
+        self.sendTelegramAlert("Hi! I'm the SESNSP Snap Bot 🤖. I just wake up and briefly I will make a snapshot of the target entry at the SESNSP web site!")
         
         # Validate save path
         logging.info("Validating path...")
@@ -32,7 +32,7 @@ class SnapBot:
             self.savePath = savePath
         else:
             # Define error message
-            error_msg = "The specified path (<code>{0}</code>) to save the snap shot does not exist (or I can't access it 😖)! Please contact my administrator.".format(savePath)
+            error_msg = "The specified path (<code>{0}</code>) to save the snapshot does not exist (or I can't access it 😖)! Please contact my administrator.".format(savePath)
             # Log error
             logger.error(error_msg)
             # Send error message to telegram chat
@@ -142,7 +142,7 @@ class SnapBot:
         # Check result
         if subprocess_return.returncode != 0:
             # Define error message
-            error_msg = "I failed to zip the downloaded snap shot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            error_msg = "I failed to zip the downloaded snapshot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
             # Send telegram message
             self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             # Raise
@@ -155,7 +155,7 @@ class SnapBot:
         # Check result
         if subprocess_return.returncode != 0:
             # Define error message
-            error_msg = "I failed to get the MD5 sum of the downloaded snap shot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            error_msg = "I failed to get the MD5 sum of the downloaded snapshot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
             # Send telegram message
             self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             # Raise
@@ -164,7 +164,7 @@ class SnapBot:
         md5sum = subprocess_return.stdout.decode('utf-8').split(" ")[0]
 
         # Send md5sum via Telegram
-        self.sendTelegramAlert("MD5 hash sum of the compressed snap shot: <code>{0}</code>".format(md5sum))
+        self.sendTelegramAlert("MD5 hash sum of the compressed snapshot: <code>{0}</code>".format(md5sum))
 
         # Make a copy of the file into the public server path
         logger.info("Making a copy into the public directory of the server...")
@@ -173,7 +173,7 @@ class SnapBot:
         # Check result
         if subprocess_return.returncode != 0:
             # Define error message
-            error_msg = "I failed to make a public copy of the snap shot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            error_msg = "I failed to make a public copy of the snapshot ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
             # Send telegram message
             self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             # Raise
