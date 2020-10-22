@@ -271,6 +271,7 @@ class SnapBot:
         # Now, get the document id
         logger.info("Getting document ID...")
         document_id = get_document_id(href)
+        print(document_id)
 
         # Check document id
         if len(document_id) < 1 or len(document_id) > 1:
