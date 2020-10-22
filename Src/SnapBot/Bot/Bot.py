@@ -226,8 +226,26 @@ class SnapBot:
         # If response was ok, parse response with BeautifulSoup
         logger.info("Parsing response...")
         parsed_response = BeautifulSoup(test_response.text, 'html.parser')
-        # Create dom
+        # Create dom with etree
         dom = etree.HTML(str(parsed_response))
 
-        # Print link
-        print(dom.xpath('/html/body/main/div/div[1]/div[4]/div/p[2]/a/@href'))
+        # Search by xpath
+        logger.info("Looking for link via xpath...")
+        xpath_result = dom.xpath('/html/body/main/div/div[1]/div[4]/div/p[2]/a/@href')
+        xpath_result = []
+
+        # Predefine a regex_result
+        regex_result = None
+
+        # Check if xpath returned something
+        if len(xpath_result) < 1:
+            xpath_result = None
+            # Log warning
+            logger.warning("Didn't get a valid href via xpath. Trying regex...")
+            # Send alert
+            self.sendTelegramAlert("😧 I couldn't find a valid link to the target document via XPATH. I will try suing some regex magic...")
+
+            # Search using regex
+            regex_result = dom.xpath('.//a[contains(text(),"Consulta la información")]/@href')
+
+            print(regex_result)
