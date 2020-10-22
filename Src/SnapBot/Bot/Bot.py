@@ -168,7 +168,7 @@ class SnapBot:
 
         # Make a copy of the file into the public server path
         logger.info("Making a copy into the public directory of the server...")
-        subprocess_return = subprocess.run('cp {0}.zip {1}FullPage/{0}.zip'.format(fullDirName, self.serverPublicPath), capture_output = True, shell = True)
+        subprocess_return = subprocess.run('cp {0}.zip {1}FullPage/{2}.zip'.format(fullDirName, self.serverPublicPath, dirName), capture_output = True, shell = True)
 
         # Check result
         if subprocess_return.returncode != 0:
