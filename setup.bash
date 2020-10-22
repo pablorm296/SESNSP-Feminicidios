@@ -8,4 +8,4 @@ echo "Creating virtualenv..."
 virtualenv Env
 
 # Install local package
-(source Env/bin/activate && pip install -r requirements && pip install -e Src/)
+(source Env/bin/activate && pip install -r requirements.text && pip install -e Src/)
