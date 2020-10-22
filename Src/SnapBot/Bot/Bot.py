@@ -1,6 +1,8 @@
 from SnapBot.Chron import Chron
 from SnapBot.Secrets import *
 
+from lxml import etree
+from bs4 import BeautifulSoup
 import telegram
 import datetime
 import logging
@@ -195,3 +197,37 @@ class SnapBot:
             error_msg = "Attempted to run bot routine outside a valid timedate!"
             logger.error(error_msg)
             raise Exception(error_msg)
+
+        # Compare chron date
+        if not force and not self.compareChronExpression():
+            # Define error message
+            error_msg = "I was woken up outside a valid schedule expression 😞!"
+            # Log error
+            logger.error(error_msg)
+            # Send error message to telegram chat
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            raise Exception(error_msg)
+
+        # Check if page is online
+        logger.info("Testing target URL ({0})...".format(self.targetURL))
+        test_response = requests.get(self.targetURL)
+
+        if test_response.status_code >= 300:
+            error_msg = "The target URL responded with an unsuccessful status code (<code>{0}</code>). Please make a manual check of the page.".format(test_response.status_code)
+            # Log error
+            logger.error(error_msg)
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise OSError(error_msg)
+        else:
+            logger.info("The target URL appears to be ok!")
+
+        # If response was ok, parse response with BeautifulSoup
+        logger.info("Parsing response...")
+        parsed_response = BeautifulSoup(test_response.text, 'html.parser')
+        # Create dom
+        dom = etree.HTML(str(parsed_response))
+
+        # Print link
+        print(dom.xpath('/html/body/main/div/div[1]/div[4]/div/p[2]/a/@href'))
