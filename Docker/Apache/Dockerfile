@@ -15,6 +15,9 @@ COPY config .
 # Run setup script
 RUN ./setup.sh
 
+# Copy secrets
+COPY ../../Src/SnapBot/Secrets/Secretsp.py /Srv/SESNSP/Src/SnapBot/Secrets/
+
 # Copy apache config files
 RUN ["cp", "./apache2.conf", "/etc/apache2/apache2.conf"]
 RUN ["cp", "./sesnsp.conf", "/etc/apache2/sites-available/"]
