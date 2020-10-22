@@ -325,7 +325,7 @@ class SnapBot:
 
         # Make a copy of the file into the public server path
         logger.info("Making a copy into the public directory of the server...")
-        subprocess_return = subprocess.run('cp {0} {1}Documents/{2}'.format(fullDocName, self.serverPublicPath, docName), capture_output = True, shell = True)
+        subprocess_return = subprocess.run('cp {0} {1}Docs/{2}'.format(fullDocName, self.serverPublicPath, docName), capture_output = True, shell = True)
 
         # Check result
         if subprocess_return.returncode != 0:
