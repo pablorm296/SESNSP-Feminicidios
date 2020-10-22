@@ -12,3 +12,6 @@ source Env/bin/activate
 
 # Install requirements
 pip install -r requirements.txt
+
+# Install local package
+pip install -e Src/
