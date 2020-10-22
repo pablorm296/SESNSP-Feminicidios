@@ -1,5 +1,6 @@
 from SnapBot.Chron import Chron
 from SnapBot.Secrets import *
+from SnapBot.Google.Drive import download_document, get_document_id
 
 from lxml import etree
 from bs4 import BeautifulSoup
@@ -219,7 +220,7 @@ class SnapBot:
             # Send telegram message
             self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
             # Raise
-            raise OSError(error_msg)
+            raise Exception(error_msg)
         else:
             logger.info("The target URL appears to be ok!")
 
@@ -243,9 +244,102 @@ class SnapBot:
             # Log warning
             logger.warning("Didn't get a valid href via xpath. Trying regex...")
             # Send alert
-            self.sendTelegramAlert("😧 I couldn't find a valid link to the target document via XPATH. I will try suing some regex magic...")
+            self.sendTelegramAlert("😧 I couldn't find a valid link to the target document by XPATH. I will try suing some regex magic...")
 
             # Search using regex
             regex_result = dom.xpath('.//a[contains(text(),"Consulta la información")]/@href')
 
-            print(regex_result)
+            if len(regex_result) < 1:
+                regex_result = None
+        
+        # Check both results
+        if regex_result is None and xpath_result is None:
+            # Define error msg
+            error_msg = "I failed to get the document link (both by using XPATH and regex). Maybe the page was modified? Pleas contact my administrator."
+            # Log error
+            logger.error(error_msg)
+            # Send alert
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise Exception(error_msg)
+        
+        # Get href
+        href = xpath_result[0] if xpath_result is not None else regex_result[0]
+        
+        # Send link to telegram
+        self.sendTelegramAlert('😌 It appears that the document was shared via <a href="{0}">this link</a>.'.format(href))
+
+        # Now, get the document id
+        logger.info("Getting document ID...")
+        document_id = get_document_id(href)
+
+        # Check document id
+        if len(document_id < 1) or len(document_id) > 1:
+            # Define error msg
+            error_msg = "I failed to get the document ID. Maybe it's no longer shared via Google Drive? Please contact my administrator."
+            # Log error
+            logger.error(error_msg)
+            # Send alert
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise Exception(error_msg)
+
+        # Define document name
+        docName = "Document_{0}.pdf".format(datetime.datetime.now().strftime("%Y-%m-%d-%H%M-%S-%f"))
+        # Define full dir name
+        fullDocName = "{0}/{1}".format(savePath, docName)
+
+        # Download document
+        logger.info("Downloading document...")
+        try:
+            download_document(document_id, fullDocName)
+        except Exception as e:
+            # Define error msg
+            error_msg = "I failed to download the document ID. The raised exception says: <pre>{0}</pre>".format(str(e))
+            # Log error
+            logger.error(error_msg)
+            # Send alert
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise Exception(error_msg)
+
+        # Send alert
+        self.sendTelegramAlert("🥳 I successfully made a snapshot of the target document at the SESNSP website.")
+
+        # Get md5sum
+        logger.info("Getting md5 hash sum...")
+        subprocess_return = subprocess.run('md5sum {0}'.format(fullDocName), capture_output = True, shell = True)
+
+        # Check result
+        if subprocess_return.returncode != 0:
+            # Define error message
+            error_msg = "I failed to get the MD5 sum of the downloaded document ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise OSError(error_msg)
+
+        md5sum = subprocess_return.stdout.decode('utf-8').split(" ")[0]
+
+        # Send md5sum via Telegram
+        self.sendTelegramAlert("MD5 hash sum of the downloaded document: <code>{0}</code>".format(md5sum))
+
+        # Make a copy of the file into the public server path
+        logger.info("Making a copy into the public directory of the server...")
+        subprocess_return = subprocess.run('cp {0} {1}Documents/{2}'.format(fullDocName, self.serverPublicPath, docName), capture_output = True, shell = True)
+
+        # Check result
+        if subprocess_return.returncode != 0:
+            # Define error message
+            error_msg = "I failed to make a public copy of the downloaded document ☹. The captured stderr says: <pre>{0}</pre>".format(subprocess_return.stderr.decode('utf-8'))
+            # Send telegram message
+            self.sendTelegramAlert("🛑 Something went wrong! {0}".format(error_msg))
+            # Raise
+            raise OSError(error_msg)
+
+        # Create link
+        document_link = "http://{0}/FullPage/{1}".format(self.serverURL, docName)
+
+        # Send link
+        self.sendTelegramAlert('😌 You can download the downloaded document <a href="{0}">here</a>'.format(document_link))
+        
